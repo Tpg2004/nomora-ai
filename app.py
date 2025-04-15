@@ -6,10 +6,7 @@ import altair as alt
 st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # HEADER
-try:
-    st.image("nomoraimg.jpeg", width=100)
-except:
-    st.warning("Logo not found. Skipping image display.")
+
 
 st.title("Nomora AI")
 st.markdown("#### 🍄 Smart Menu Insights to Reduce Food Waste & Boost Efficiency")
