@@ -6,6 +6,11 @@ import altair as alt
 st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # HEADER
+try:
+    st.image("nomoraimg.jpeg", width=100)
+except:
+    st.warning("Logo not found. Skipping image display.")
+
 
 
 st.title("Nomora AI")
@@ -15,8 +20,8 @@ st.markdown("---")
 # LOAD DATA
 @st.cache_data
 def load_data():
-    dishes = pd.read_csv("data/dish_sales.csv")
-    waste = pd.read_csv("data/ingredient_waste.csv")
+    dishes = pd.read_csv("dish_sales.csv")
+    waste = pd.read_csv("ingredient_waste.csv")
     return dishes, waste
 
 dishes_df, waste_df = load_data()
