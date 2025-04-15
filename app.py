@@ -11,8 +11,6 @@ try:
 except:
     st.warning("Logo not found. Skipping image display.")
 
-
-
 st.title("Nomora AI")
 st.markdown("#### 🍄 Smart Menu Insights to Reduce Food Waste & Boost Efficiency")
 st.markdown("---")
@@ -27,7 +25,7 @@ def load_data():
 dishes_df, waste_df = load_data()
 
 # --- SIMPLE CHATBOT INTERFACE ---
-st.markdown("## 🤖 Ask Nomora AI")
+st.markdown("## 🤖 Ask Nomora AI: Feel free to shoot up you're queries!")
 user_query = st.chat_input("Ask a question about your menu or waste...")
 
 if user_query:
@@ -64,13 +62,10 @@ if user_query:
                 response = "I couldn't find that dish. Please check the name and try again."
 
         elif "shelf life" in user_query:
-            for _, row in dishes_df.iterrows():
-                if any(ing.lower() in user_query for ing in row['Ingredients'].split(', ')):
-                    ingredient = [ing for ing in row['Ingredients'].split(', ') if ing.lower() in user_query][0]
-                    if ingredient.lower() in row['Ingredient Shelf Life'].lower():
-                        shelf_info = row['Ingredient Shelf Life']
-                        response = f"🧊 Shelf life info: {shelf_info}"
-                        break
+            for _, row in waste_df.iterrows():
+                if row['ingredient'].lower() in user_query:
+                    response = f"🧊 The shelf life of **{row['ingredient']}** is **{row['shelf_life']}**."
+                    break
             else:
                 response = "I couldn't find shelf life info for that ingredient."
 
