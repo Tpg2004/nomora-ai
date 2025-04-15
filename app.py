@@ -26,7 +26,7 @@ def load_data():
 dishes_df, waste_df = load_data()
 
 st.markdown("## 🤖 Ask Nomora AI")
-user_query = st.chat_input("Ask a question about your menu or waste...")
+user_query = st.chat_input("Ask a question about our food menu or wastage optimization statistics!")
 
 if user_query:
     user_query = user_query.lower()
