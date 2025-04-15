@@ -41,18 +41,17 @@ if user_query:
             response = "👋 Hey there! Am so delighted to meet you! How can I help you today?"
 
         elif "stock less" in user_query or "reduce stock" in user_query:
-    top_waste = waste_df.sort_values(by='waste_kg', ascending=False).head(1).iloc[0]
-    response = f"📦 You should consider stocking less of **{top_waste['ingredient']}**, as it had the highest waste last week: **{top_waste['waste_kg']} kg**."
-
-elif "low-selling" in user_query and "high-waste" in user_query:
-    combined = pd.merge(dishes_df, waste_df, left_on='Dish Name', right_on='dish_name', how='inner')
-    combined['waste_pct'] = combined['waste_kg'] / (combined['waste_kg'] + 0.001)  # avoid zero div
-    filtered = combined[(combined['Weekly Orders'] < 10) & (combined['waste_kg'] > 1)]
-    if not filtered.empty:
-        dish = filtered.iloc[0]
-        response = f"❌ Consider removing **{dish['Dish Name']}** – low sales (**{dish['Weekly Orders']}** orders) and high waste (**{dish['ingredient']}**: **{dish['waste_kg']} kg**)."
-    else:
-        response = "All dishes with low orders currently have acceptable waste levels."
+           top_waste = waste_df.sort_values(by='waste_kg', ascending=False).head(1).iloc[0]
+           response = f"📦 You should consider stocking less of **{top_waste['ingredient']}**, as it had the highest waste last week: **{top_waste['waste_kg']} kg**."
+        elif "low-selling" in user_query and "high-waste" in user_query:
+           combined = pd.merge(dishes_df, waste_df, left_on='Dish Name', right_on='dish_name', how='inner')
+           combined['waste_pct'] = combined['waste_kg'] / (combined['waste_kg'] + 0.001)  # avoid zero div
+           filtered = combined[(combined['Weekly Orders'] < 10) & (combined['waste_kg'] > 1)]
+           if not filtered.empty:
+              dish = filtered.iloc[0]
+              response = f"❌ Consider removing **{dish['Dish Name']}** – low sales (**{dish['Weekly Orders']}** orders) and high waste (**{dish['ingredient']}**: **{dish['waste_kg']} kg**)."
+           else:
+              response = "All dishes with low orders currently have acceptable waste levels."
 
         elif "most wasted" in user_query or "high waste" in user_query:
             top_waste = waste_df.sort_values(by='waste_kg', ascending=False).iloc[0]
