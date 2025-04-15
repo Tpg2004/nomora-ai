@@ -8,7 +8,6 @@ from PIL import Image
 st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # HEADER
-col1 = st.column([0.15])
 with col1:
     st.title("Nomora AI")
     st.markdown("#### 🍄 Smart Menu Insights to Reduce Food Waste & Boost Efficiency")
