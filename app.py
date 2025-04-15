@@ -8,6 +8,10 @@ from PIL import Image
 st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # HEADER
+try:
+    st.image("assets/logo.png", width=100)
+except Exception as e:
+    st.warning("Logo not found. Skipping image display.")
 col1, col2 = st.columns([0.15, 0.85])
 with col1:
     st.image("assets/logo.png", width=100)
