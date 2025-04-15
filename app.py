@@ -7,7 +7,7 @@ st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # LOGO (Optional)
 try:
-    st.image("assets/logo.png", width=100)
+    st.image("nomoraimg.jpeg", width=100)
 except:
     st.warning("Logo not found. Skipping image display.")
 
