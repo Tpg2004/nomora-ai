@@ -25,6 +25,55 @@ def load_data():
 
 dishes_df, waste_df = load_data()
 
+st.markdown("## 🤖 Ask Nomora AI")
+user_query = st.chat_input("Ask a question about your menu or waste...")
+
+if user_query:
+    user_query = user_query.lower()
+
+    with st.chat_message("user"):
+        st.write(user_query)
+
+    with st.chat_message("assistant"):
+        response = ""
+
+        if "most wasted" in user_query or "high waste" in user_query:
+            top_waste = waste_df.sort_values(by='waste_kg', ascending=False).iloc[0]
+            response = f"🔝 The most wasted ingredient is **{top_waste['ingredient']}**, with **{top_waste['waste_kg']} kg** wasted."
+
+        elif "remove" in user_query or "low orders" in user_query:
+            low_dish = dishes_df.sort_values(by='Weekly Orders').iloc[0]
+            response = f"⚠️ Consider removing **{low_dish['Dish Name']}** – it had just **{low_dish['Weekly Orders']}** orders last week."
+
+        elif "suggest" in user_query or "new dish" in user_query:
+            response = "👩‍🍳 Try creating new dishes using high-waste ingredients like Avocado or Lemon. For example:\n\n- **Avocado Hummus Wrap**\n- **Lemon Herb Pasta**"
+
+        elif "overlap" in user_query or "common ingredient" in user_query:
+            common = dishes_df['Ingredients'].str.split(', ').explode().value_counts().head(1)
+            ingredient = common.index[0]
+            response = f"🔁 The most common ingredient across dishes is **{ingredient}**. Use it wisely to reduce waste."
+
+        elif "profit" in user_query:
+            for _, row in dishes_df.iterrows():
+                if row['Dish Name'].lower() in user_query:
+                    response = f"💰 The profit margin of **{row['Dish Name']}** is **{row['Profit Margin']}**."
+                    break
+            else:
+                response = "I couldn't find that dish. Please check the name and try again."
+
+        elif "shelf life" in user_query:
+            for _, row in waste_df.iterrows():
+                if row['ingredient'].lower() in user_query:
+                    response = f"🧊 The shelf life of **{row['ingredient']}** is **{row['shelf_life']}**."
+                    break
+            else:
+                response = "I couldn't find shelf life info for that ingredient."
+
+        else:
+            response = "🤔 I'm not sure how to answer that yet, but you can ask things like:\n- 'Which dish should we remove?'\n- 'Shelf life of Avocado'\n- 'Profit of Veg Burger'"
+
+        st.write(response)
+        
 # ✅ DEBUG (optional during development)
 # st.write("DISHES COLUMNS:", dishes_df.columns)
 # st.write("WASTE COLUMNS:", waste_df.columns)
