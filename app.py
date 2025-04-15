@@ -37,8 +37,8 @@ if user_query:
     with st.chat_message("assistant"):
         response = ""
 
-        if user_query in ["hi", "hello", "hey"]:
-            response = "👋 Hey there! Am so delighted to meet you! How can I help you today?"
+    if user_query in ["hi", "hello", "hey"]:
+         response = "👋 Hey there! Am so delighted to meet you! How can I help you today?"
 
         if "most wasted" in user_query or "high waste" in user_query:
             top_waste = waste_df.sort_values(by='waste_kg', ascending=False).iloc[0]
