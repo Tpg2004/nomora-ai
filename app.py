@@ -19,8 +19,8 @@ st.markdown("---")
 # LOAD DATA
 @st.cache_data
 def load_data():
-    dishes = pd.read_csv("data/dish_sales.csv")
-    waste = pd.read_csv("data/ingredient_waste.csv")
+    dishes = pd.read_csv("dish_sales.csv")
+    waste = pd.read_csv("ingredient_waste.csv")
     return dishes, waste
 
 dishes_df, waste_df = load_data()
