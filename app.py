@@ -8,14 +8,8 @@ from PIL import Image
 st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # HEADER
-try:
-    st.image("assets/logo.png", width=100)
-except Exception as e:
-    st.warning("Logo not found. Skipping image display.")
-col1, col2 = st.columns([0.15, 0.85])
+col1 = st.column([0.15])
 with col1:
-    st.image("assets/logo.png", width=100)
-with col2:
     st.title("Nomora AI")
     st.markdown("#### 🍄 Smart Menu Insights to Reduce Food Waste & Boost Efficiency")
 
@@ -24,8 +18,8 @@ st.markdown("---")
 # LOAD DATA
 @st.cache_data
 def load_data():
-    dishes = pd.read_csv("data/dish_sales.csv")
-    waste = pd.read_csv("data/ingredient_waste.csv")
+    dishes = pd.read_csv("dish_sales.csv")
+    waste = pd.read_csv("ingredient_waste.csv")
     return dishes, waste
 
 dishes_df, waste_df = load_data()
