@@ -12,9 +12,13 @@ except:
     st.warning("Logo not found. Skipping image display.")
 
 # HEADER
-st.title("Nomora AI")
-st.markdown("#### 🍄 Smart Menu Insights to Reduce Food Waste & Boost Efficiency")
-st.markdown("---")
+st.markdown("""
+    <div style='text-align:center;'>
+        <h1 style='color:#2c3e50;'>Nomora AI</h1>
+        <h4 style='color:#16a085;'>🍄 Smart Menu Insights to Reduce Food Waste & Boost Efficiency</h4>
+    </div>
+    <hr style='border:1px solid #ccc;'>
+    """, unsafe_allow_html=True)
 
 # LOAD DATA
 @st.cache_data
@@ -80,7 +84,7 @@ if user_query:
         elif "shelf life" in user_query:
             for _, row in waste_df.iterrows():
                 if row['ingredient'].lower() in user_query:
-                    response = f"🧊 The shelf life of **{row['ingredient']}** is **{row['shelf_life']}**."
+                    response = f"🧂 The shelf life of **{row['ingredient']}** is **{row['shelf_life']}**."
                     break
             else:
                 response = "I couldn't find shelf life info for that ingredient."
@@ -89,10 +93,6 @@ if user_query:
             response = "🤔 I'm not sure how to answer that yet, but you can ask things like:\n- 'Which dish should we remove?'\n- 'Shelf life of Avocado'\n- 'Profit of Veg Burger'"
 
         st.write(response)
-        
-# ✅ DEBUG (optional during development)
-# st.write("DISHES COLUMNS:", dishes_df.columns)
-# st.write("WASTE COLUMNS:", waste_df.columns)
 
 # SECTION 1: Low-Performing Dishes
 st.subheader("📉 Low-Performing Dishes")
@@ -145,5 +145,9 @@ st.dataframe(overlap.head(10))
 st.write("These ingredients are used across multiple dishes. Optimize usage to minimize waste.")
 
 # FOOTER
-st.markdown("---")
-st.markdown("💡 **Nomora AI** empowers restaurants to cut costs, reduce waste, and reimagine menus with data.")
+st.markdown("""
+    <hr>
+    <p style='text-align:center; color: #7f8c8d;'>
+        💡 <b>Nomora AI</b> empowers restaurants to cut costs, reduce waste, and reimagine menus with data.
+    </p>
+    """, unsafe_allow_html=True)
