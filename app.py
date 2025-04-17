@@ -10,7 +10,7 @@ try:
     st.markdown(
         """
         <div style="text-align: center;">
-            <img src="https://raw.githubusercontent.com/your-repo/assets/logo.png" width="120">
+            <img src="https://raw.githubusercontent.com/nomora-ai/nomoraimg.jpeg" width="120">
         </div>
         """,
         unsafe_allow_html=True
