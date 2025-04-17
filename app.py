@@ -7,9 +7,17 @@ st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
 
 # LOGO (Optional)
 try:
-    st.image("nomoraimg.jpeg", width=100)
-except:
+    st.markdown(
+        """
+        <div style="text-align: center;">
+            <img src="https://raw.githubusercontent.com/your-repo/assets/logo.png" width="120">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+except Exception as e:
     st.warning("Logo not found. Skipping image display.")
+
 
 # HEADER
 st.markdown("""
