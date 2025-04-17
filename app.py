@@ -1,9 +1,15 @@
-import streamlit as st
+mport streamlit as st
 import pandas as pd
 import altair as alt
 
-# APP SETUP
+# SETUP
 st.set_page_config(page_title="Nomora AI", layout="wide", page_icon="🍽️")
+
+# LOGO (Optional) can you make the UI for this page more attractive and impressive please 
+try:
+    st.image("nomoraimg.jpeg", width=140)
+except:
+    st.warning("Logo not found. Skipping image display.")
 
 # HEADER
 st.title("Nomora AI")
@@ -19,9 +25,8 @@ def load_data():
 
 dishes_df, waste_df = load_data()
 
-# --- SIMPLE CHATBOT INTERFACE ---
 st.markdown("## 🤖 Ask Nomora AI")
-user_query = st.chat_input("Ask a question about your menu or waste...")
+user_query = st.chat_input("Ask a question about our food menu or wastage optimization statistics!")
 
 if user_query:
     user_query = user_query.lower()
@@ -32,7 +37,23 @@ if user_query:
     with st.chat_message("assistant"):
         response = ""
 
-        if "most wasted" in user_query or "high waste" in user_query:
+        if user_query in ["hi", "hello", "hey"]:
+            response = "👋 Hey there! Am so delighted to meet you! How can I help you today?"
+
+        elif "stock less" in user_query or "reduce stock" in user_query:
+           top_waste = waste_df.sort_values(by='waste_kg', ascending=False).head(1).iloc[0]
+           response = f"📦 You should consider stocking less of **{top_waste['ingredient']}**, as it had the highest waste last week: **{top_waste['waste_kg']} kg**."
+        elif "low-selling" in user_query and "high-waste" in user_query:
+           combined = pd.merge(dishes_df, waste_df, left_on='Dish Name', right_on='dish_name', how='inner')
+           combined['waste_pct'] = combined['waste_kg'] / (combined['waste_kg'] + 0.001)  # avoid zero div
+           filtered = combined[(combined['Weekly Orders'] < 10) & (combined['waste_kg'] > 1)]
+           if not filtered.empty:
+              dish = filtered.iloc[0]
+              response = f"❌ Consider removing **{dish['Dish Name']}** – low sales (**{dish['Weekly Orders']}** orders) and high waste (**{dish['ingredient']}**: **{dish['waste_kg']} kg**)."
+           else:
+              response = "All dishes with low orders currently have acceptable waste levels."
+
+        elif "most wasted" in user_query or "high waste" in user_query:
             top_waste = waste_df.sort_values(by='waste_kg', ascending=False).iloc[0]
             response = f"🔝 The most wasted ingredient is **{top_waste['ingredient']}**, with **{top_waste['waste_kg']} kg** wasted."
 
@@ -68,26 +89,32 @@ if user_query:
             response = "🤔 I'm not sure how to answer that yet, but you can ask things like:\n- 'Which dish should we remove?'\n- 'Shelf life of Avocado'\n- 'Profit of Veg Burger'"
 
         st.write(response)
+        
+# ✅ DEBUG (optional during development)
+# st.write("DISHES COLUMNS:", dishes_df.columns)
+# st.write("WASTE COLUMNS:", waste_df.columns)
 
-# SECTION 1: Dish Performance
+# SECTION 1: Low-Performing Dishes
 st.subheader("📉 Low-Performing Dishes")
-low_performers = dishes_df[dishes_df['Weekly Orders'] < 30].sort_values(by='Weekly Orders')
-
+low_performers = dishes_df[dishes_df['Weekly Orders'] < 15].sort_values(by='Weekly Orders')
 st.write("These dishes had low orders. Consider removing or reworking them:")
 st.dataframe(low_performers[['Dish Name', 'Weekly Orders', 'Profit Margin', 'Ingredient Cost']])
 
-# SECTION 2: Ingredient Waste
+# SECTION 2: High-Waste Ingredients
 st.subheader("🗑️ High-Waste Ingredients")
-high_waste = waste_df.sort_values(by='waste_kg', ascending=False).head(5)
+if 'Avg Waste %' in waste_df.columns:
+    high_waste = waste_df.sort_values(by='Avg Waste %', ascending=False).head(5)
 
-chart = alt.Chart(high_waste).mark_bar().encode(
-    x=alt.X('ingredient', sort='-y'),
-    y='waste_kg',
-    color=alt.value('orange')
-).properties(width=600, height=300)
+    chart = alt.Chart(high_waste).mark_bar().encode(
+        x=alt.X('Ingredient', sort='-y'),
+        y=alt.Y('Avg Waste %'),
+        color=alt.value('orange')
+    ).properties(width=600, height=300)
 
-st.altair_chart(chart)
-st.write("Top wasted ingredients to focus on repurposing or reducing.")
+    st.altair_chart(chart)
+    st.write("Top wasted ingredients to focus on repurposing or reducing.")
+else:
+    st.warning("Missing 'Avg Waste %' column in ingredient_waste.csv")
 
 # SECTION 3: Suggested Recipes
 st.subheader("🍽️ Suggested New Dishes Using Wasted Ingredients")
@@ -100,12 +127,17 @@ suggested_dishes = {
 for dish, ingredients in suggested_dishes.items():
     st.markdown(f"**{dish}** – Uses: _{', '.join(ingredients)}_")
 
-# SECTION 4: Ingredient Overlap & Margins
+# SECTION 4: Overlapping Ingredients in High-Margin Dishes
 st.subheader("🔁 High-Margin Dishes with Ingredient Overlap")
-common_ingredients = dishes_df.copy()
-common_ingredients['Ingredient List'] = common_ingredients['Ingredients'].str.split(', ')
-exploded = common_ingredients.explode('Ingredient List')
-overlap = exploded.groupby(['Ingredient List'])['Dish Name'].nunique().reset_index()
+
+# Convert ingredients string to a list
+dishes_df['Ingredients List'] = dishes_df['Ingredients'].apply(lambda x: [i.strip() for i in x.split(',')])
+
+# Explode for overlap analysis
+exploded_df = dishes_df[['Dish Name', 'Profit Margin', 'Ingredients List']].explode('Ingredients List')
+
+# Count overlaps
+overlap = exploded_df.groupby('Ingredients List')['Dish Name'].nunique().reset_index()
 overlap.columns = ['Ingredient', 'Dish Count']
 overlap = overlap.sort_values(by='Dish Count', ascending=False)
 
